@@ -4,9 +4,13 @@ use 5.006;
 use strict;
 use warnings;
 
+use parent 'SMS::Send::Driver';
+
+use SMS::MessageBird;
+
 =head1 NAME
 
-SMS::Send::MessageBird - The great new SMS::Send::MessageBird!
+SMS::Send::MessageBird - SMS::Send driver for the SMS::MessageBird distribution.
 
 =head1 VERSION
 
@@ -19,34 +23,51 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+Enables sneding of SMS messages with the SMS::Send distribution using
+MessageBird's API as the providing gateway via the SMS::MessageBird
+distribution.
 
 Perhaps a little code snippet.
 
     use SMS::Send::MessageBird;
 
-    my $foo = SMS::Send::MessageBird->new();
-    ...
+    my $messagebird = SMS::Send::MessageBird->new(
+        'SMS::MessageBird',
+        _api_key    => 'test_ABCDEF123456',
+        _originator => 'James Ronan',
+    );
+    $messagebird->send_sms(
+        text => 'Hi, How are you?',
+        to   => '+441234567890',
+    );
 
-=head1 EXPORT
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
 
-=head1 SUBROUTINES/METHODS
+=head1 METHODS
 
-=head2 function1
+=head2 new (constructor)
 
 =cut
 
-sub function1 {
+sub new {
+    my ($class, %params) = @_;
+
+    my $self = bless {
+
+    }, $class || 'SMS::Send::MessageBird';
+
 }
 
-=head2 function2
+=head2 send_sms
 
 =cut
 
-sub function2 {
+sub send_sms {
+    my ($self, %params) = @_;
+
+
+
+
 }
 
 =head1 AUTHOR
