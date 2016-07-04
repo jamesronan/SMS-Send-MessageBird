@@ -23,16 +23,15 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-Enables sneding of SMS messages with the SMS::Send distribution using
+Enables sending of SMS messages with the SMS::Send distribution using
 MessageBird's API as the providing gateway via the SMS::MessageBird
 distribution.
 
-Perhaps a little code snippet.
-
+    use SMS::Send;
     use SMS::Send::MessageBird;
 
-    my $messagebird = SMS::Send::MessageBird->new(
-        'SMS::MessageBird',
+    my $messagebird = SMS::Send->new(
+        'SMS::Send::MessageBird',
         _api_key    => 'test_ABCDEF123456',
         _originator => 'James Ronan',
     );
@@ -47,7 +46,7 @@ Perhaps a little code snippet.
 SMS::Send Driver for the SMS::MessageBird distribution - provides a simple
 interface for SMS sending via MessageBird.
 
-This mdoule isn't designed to be used on it's own. Please see L<SMS::Send>
+This module isn't designed to be used on its own. Please see L<SMS::Send>
 for more information.
 
 
@@ -109,8 +108,8 @@ Optional. This should be a hashref of the extra parameters you wish to pass to
 SMS::MessageBird.
 
 The one exception to the "optional" status is be the originator parameter, If
-you don't pass _originator to the SMS::Send::MessageBird constructor new() then
-you must provide it via the _parameters hashref.
+you don't pass _originator to the SMS::Send constructor then you must provide
+it via the _parameters hashref.
 
 =back
 
