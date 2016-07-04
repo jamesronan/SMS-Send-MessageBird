@@ -42,8 +42,17 @@ Perhaps a little code snippet.
     );
 
 
+=head1 DESCRIPTION
+
+SMS::Send Driver for the SMS::MessageBird distribution - provides a simple
+interface for SMS sending via MessageBird.
+
+This mdoule isn't designed to be used on it's own. Please see L<SMS::Send>
+for more information.
+
 
 =head1 METHODS
+
 
 =head2 new (constructor)
 
@@ -53,22 +62,83 @@ sub new {
     my ($class, %params) = @_;
 
     my $self = bless {
-
+        api_key     => $params{_api_key},
     }, $class || 'SMS::Send::MessageBird';
 
+    $self->{messagebird} = SMS::MessageBird->new(
+        api_key => $self->{api_key},
+    );
+
+    # For the optional accepted constructor params for SMS::MessageBird - if
+    # we've been passed them, give them to SMS::MessageBird.
+    for my $messagebird_param (qw( originator api_url )) {
+        if (exists $params{ "_$messagebird_param" }) {
+            $self->{messagebird}->$messagebird_param(
+                $params{ "_$messagebird_param" }
+            );
+        }
+    }
+
+    return $self;
 }
 
+
 =head2 send_sms
+
+Sends an SMS via MessageBird.
+
+As there are a whole host of optional parameters that can be passed to the
+MessageBird API, along with the required parameters, an additional '_parameters'
+key can be passed containing a hash of those options.
+
+=over
+
+=item to
+
+Required. This is mapped to SMS::MessageBird's recipients parameter. Due to the
+way SMS::Send works, it will accept only a single recipient.
+
+=item text
+
+Required. This is mapped to SMS::MessageBird's body parameter. It should contain
+the content of the message you wish to send.
+
+=item _parameters
+
+Optional. This should be a hashref of the extra parameters you wish to pass to
+SMS::MessageBird.
+
+The one exception to the "optional" status is be the originator parameter, If
+you don't pass _originator to the SMS::Send::MessageBird constructor new() then
+you must provide it via the _parameters hashref.
+
 
 =cut
 
 sub send_sms {
     my ($self, %params) = @_;
 
+    my %messagebird_params = (
+        recipients => $params{to},
+        body       => $params{text},
+    );
 
+    if (exists $params{_parameters}) {
+        %messagebird_params = (
+            %messagebird_params,
+            %{ $params{_parameters} },
+        );
+    }
 
+    my $response = $self->{messagebird}->sms->send(%messagebird_params);
+
+    require Data::Dump;
+    warn Data::Dump::dump($response);
+
+    return $response->{ok};
 
 }
+
 
 =head1 AUTHOR
 
@@ -76,87 +146,23 @@ James Ronan, C<< <james at ronanweb.co.uk> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-sms-send-messagebird at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=SMS-Send-MessageBird>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
+Please report any bugs or feature requests to C<bug-sms-send-messagebird at rt.cpan.org>,
+or through the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=SMS-Send-MessageBird>.
+I will be notified, and then you'll automatically be notified of progress on
+your bug as I make changes.
 
-
-
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc SMS::Send::MessageBird
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker (report bugs here)
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=SMS-Send-MessageBird>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/SMS-Send-MessageBird>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/SMS-Send-MessageBird>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/SMS-Send-MessageBird/>
-
-=back
-
-
-=head1 ACKNOWLEDGEMENTS
+Alternatively you can raise an issue on the source code which is available on
+L<GitHub|https://github.com/jamesronan/SMS-Send-MessageBird>.
 
 
 =head1 LICENSE AND COPYRIGHT
 
 Copyright 2016 James Ronan.
 
-This program is free software; you can redistribute it and/or modify it
-under the terms of the the Artistic License (2.0). You may obtain a
-copy of the full license at:
-
-L<http://www.perlfoundation.org/artistic_license_2_0>
-
-Any use, modification, and distribution of the Standard or Modified
-Versions is governed by this Artistic License. By using, modifying or
-distributing the Package, you accept this license. Do not use, modify,
-or distribute the Package, if you do not accept this license.
-
-If your Modified Version has been derived from a Modified Version made
-by someone other than you, you are nevertheless required to ensure that
-your Modified Version complies with the requirements of this license.
-
-This license does not grant you the right to use any trademark, service
-mark, tradename, or logo of the Copyright Holder.
-
-This license includes the non-exclusive, worldwide, free-of-charge
-patent license to make, have made, use, offer to sell, sell, import and
-otherwise transfer the Package with respect to any patent claims
-licensable by the Copyright Holder that are necessarily infringed by the
-Package. If you institute patent litigation (including a cross-claim or
-counterclaim) against any party alleging that the Package constitutes
-direct or contributory patent infringement, then this Artistic License
-to you shall terminate on the date that such litigation is filed.
-
-Disclaimer of Warranty: THE PACKAGE IS PROVIDED BY THE COPYRIGHT HOLDER
-AND CONTRIBUTORS "AS IS' AND WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES.
-THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-PURPOSE, OR NON-INFRINGEMENT ARE DISCLAIMED TO THE EXTENT PERMITTED BY
-YOUR LOCAL LAW. UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR
-CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR
-CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE,
-EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
 
 =cut
 
 1; # End of SMS::Send::MessageBird
+
