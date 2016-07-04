@@ -112,6 +112,7 @@ The one exception to the "optional" status is be the originator parameter, If
 you don't pass _originator to the SMS::Send::MessageBird constructor new() then
 you must provide it via the _parameters hashref.
 
+=back
 
 =cut
 
@@ -132,11 +133,7 @@ sub send_sms {
 
     my $response = $self->{messagebird}->sms->send(%messagebird_params);
 
-    require Data::Dump;
-    warn Data::Dump::dump($response);
-
     return $response->{ok};
-
 }
 
 
