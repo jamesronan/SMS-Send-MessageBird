@@ -14,11 +14,11 @@ SMS::Send::MessageBird - SMS::Send driver for the SMS::MessageBird distribution.
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 
 =head1 SYNOPSIS
