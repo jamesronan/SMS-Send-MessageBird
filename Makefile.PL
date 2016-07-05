@@ -18,7 +18,8 @@ WriteMakefile(
         'Test::More' => 0,
     },
     PREREQ_PM => {
-        'SMS::MessageBird' => 0,
+        'SMS::Send::Driver' => 0,
+        'SMS::MessageBird'  => 0,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'SMS-Send-MessageBird-*' },
